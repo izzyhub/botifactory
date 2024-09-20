@@ -8,7 +8,7 @@ use axum::extract::Path;
 use axum::extract::State;
 use sqlx::SqlitePool;
 
-pub fn router() -> Router {
+pub fn router() -> Router<SqlitePool> {
     Router::new()
         .route(
             "/project/:project_name/name/:channel_name/latest",
