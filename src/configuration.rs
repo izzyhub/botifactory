@@ -8,6 +8,8 @@ use tracing::level_filters::LevelFilter;
 use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode};
 use sqlx::ConnectOptions;
 
+use std::path::PathBuf;
+
 #[derive(Debug, Default, serde::Deserialize, PartialEq, Eq)]
 pub struct Settings {
     pub database: DatabaseSettings,
@@ -21,6 +23,7 @@ pub struct ApplicationSettings {
     pub host: String,
     #[serde(deserialize_with = "deserialize_log_level")]
     pub log_level: LevelFilter,
+    pub release_path: PathBuf,
 }
 
 impl Default for ApplicationSettings {
@@ -29,6 +32,7 @@ impl Default for ApplicationSettings {
             port: 3000,
             host: "localhost".into(),
             log_level: LevelFilter::TRACE,
+            release_path: PathBuf::from("/releases"),
         }
     }
 }
@@ -54,7 +58,7 @@ pub struct DatabaseSettings {
 impl Default for DatabaseSettings {
     fn default() -> Self {
         DatabaseSettings {
-            database_url: "sqlite3://botifactory.db".to_string(),
+            database_url: "sqlite://botifactory.db".to_string(),
             log_level: LevelFilter::INFO,
         }
     }

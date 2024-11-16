@@ -1,18 +1,121 @@
 use axum::{
     routing::{get, post},
-    serve::Serve,
     Json, Router,
 };
 
+use crate::configuration::Settings;
+use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
+use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
+use std::fs::create_dir_all;
+use std::path::PathBuf;
+use std::sync::Arc;
 
-pub fn router() -> Router<SqlitePool> {
-    Router::new().route(
-        "/project/:project_name/name/:channel_name",
-        get(show_project_channel),
-    )
+#[derive(Serialize, Deserialize)]
+pub struct Channel {
+    pub id: i64,
+    pub name: String,
+    pub project_id: i64,
+    pub created_at: i64,
+    pub updated_at: i64,
 }
 
-pub async fn show_project_channel(Path((project_name, channel_name)): Path<(String, String)>) {}
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ChannelBody {
+    channel: Channel,
+}
+
+#[derive(Serialize, Deserialize)]
+struct CreateChannel {
+    channel_name: String,
+}
+
+pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
+    Router::new()
+        .route(
+            "/project/:project_name/:channel_name",
+            get(show_project_channel),
+        )
+        .route("/channel/:channel_id", get(show_channel_by_id))
+        .route("/project/:project_name/new", post(create_project_channel))
+}
+
+pub async fn show_project_channel(
+    Path((project_name, channel_name)): Path<(String, String)>,
+    State((db, _settings)): State<(SqlitePool, Arc<Settings>)>,
+) -> Result<Json<ChannelBody>> {
+    let channel = sqlx::query_as!(
+        Channel,
+        r#"
+          select id,
+          name,
+          project_id,
+          created_at,
+          updated_at
+          from release_channel
+          where name = $1
+          and project_id = 
+          (select id from projects where name = $2)
+        "#,
+        channel_name,
+        project_name
+    )
+    .fetch_optional(&db)
+    .await?
+    .ok_or(APIError::NotFound)?;
+
+    Ok(Json(ChannelBody { channel }))
+}
+pub async fn show_channel_by_id(
+    Path(channel_id): Path<i64>,
+    State((db, _settings)): State<(SqlitePool, Arc<Settings>)>,
+) -> Result<Json<ChannelBody>> {
+    let channel = sqlx::query_as!(
+        Channel,
+        r#"
+          select id,
+          name,
+          project_id,
+          created_at,
+          updated_at
+          from release_channel
+          where id = $1
+        "#,
+        channel_id,
+    )
+    .fetch_optional(&db)
+    .await?
+    .ok_or(APIError::NotFound)?;
+
+    Ok(Json(ChannelBody { channel }))
+}
+pub async fn create_project_channel(
+    Path(project_name): Path<String>,
+    State((db, settings)): State<(SqlitePool, Arc<Settings>)>,
+    Json(payload): Json<CreateChannel>,
+) -> Result<()> {
+    let channel_path: PathBuf = [
+        &settings.application.release_path,
+        &PathBuf::from(&project_name),
+        &PathBuf::from(&payload.channel_name),
+    ]
+    .iter()
+    .collect();
+    create_dir_all(channel_path)?;
+
+    let project = sqlx::query!(
+        r#"
+          insert into release_channel
+          (name, project_id) VALUES ($1, (SELECT id from projects where name = $2))
+        "#,
+        payload.channel_name,
+        project_name
+    )
+    .execute(&db)
+    .await?;
+
+    Ok(())
+}

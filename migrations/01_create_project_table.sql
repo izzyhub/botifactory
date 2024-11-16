@@ -6,10 +6,10 @@ CREATE TABLE projects (
 );
 
 
-CREATE TRIGGER projects
+CREATE TRIGGER projects_updated_at
 AFTER UPDATE OF id, version, hash, channel_id
 ON projects
 FOR EACH ROW BEGIN UPDATE projects
-  SET updated_on = DATETIME('NOW')
+  SET updated_at = DATETIME('NOW')
   WHERE rowid = new.rowid;
 END
