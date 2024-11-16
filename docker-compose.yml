@@ -1,0 +1,43 @@
+---
+version: "3.5"
+services:
+  tattletale-api:
+    image: gitea.izzys.place/izzy/botifactory:latest
+    container_name: botifactory
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 9000
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - .env:/home/quart/.env
+    networks:
+      - t2_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tattletale-api-rtr.rule=Host(`tattletale-api.izzys.place`)"
+      - "traefik.http.routers.tattletale-api-rtr.tls=true"
+      - "traefik.http.services.tattletale-api-rtr.loadbalancer.server.port=9000"
+      - flame.type=application # "app" works too
+      - flame.name=tattletale-api
+      - flame.url=https://tattletale-api.izzys.place
+
+  tattletale-bot:
+    image: gitea.izzys.place/izzy/tattletale-bot:latest
+    container_name: tattletale-bot
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - .env:/home/bot/.env
+
+networks:
+  t2_proxy:
+    name: t2_proxy
+    external: true
