@@ -51,7 +51,6 @@ jobs:
           override: true
 
       - name: Install sqlx-cli 
-        uses: actions-rs/cargo@v1
         uses: baptiste0928/cargo-install@v3
         with:
           crate: sqlx-cli
@@ -78,7 +77,6 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
@@ -116,7 +114,6 @@ jobs:
           override: true
 
       - name: Install sqlx-cli 
-        uses: actions-rs/cargo@v1
         uses: baptiste0928/cargo-install@v3
         with:
           crate: sqlx-cli
@@ -163,7 +160,6 @@ jobs:
           override: true
 
       - name: Install sqlx-cli 
-        uses: actions-rs/cargo@v1
         uses: baptiste0928/cargo-install@v3
         with:
           crate: sqlx-cli
