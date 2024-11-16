@@ -30,7 +30,7 @@ jobs:
           - 5432:5432
     env:
       SQLX_VERSION: 0.5.5
-      SQLX_FEATURES: postgres
+      SQLX_FEATURES: sqlite
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -73,8 +73,6 @@ jobs:
 
       - name: Migrate database
         run: |
-          sudo apt-get install libpq-dev -y
-          #SKIP_DOCKER=true ./scripts/init_db.sh
           sqlx database setup
 
       - name: Run cargo test
@@ -111,7 +109,7 @@ jobs:
           - 5432:5432
     env:
       SQLX_VERSION: 0.5.5
-      SQLX_FEATURES: postgres
+      SQLX_FEATURES: sqlite
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -146,8 +144,6 @@ jobs:
 
       - name: Migrate database
         run: |
-          sudo apt-get install libpq-dev -y
-          #SKIP_DOCKER=true ./scripts/init_db.sh
           sqlx database setup
 
       - name: Run clippy
@@ -170,7 +166,7 @@ jobs:
           - 5432:5432
     env:
       SQLX_VERSION: 0.5.5
-      SQLX_FEATURES: postgres
+      SQLX_FEATURES: sqlite
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -204,8 +200,6 @@ jobs:
 
       - name: Migrate database
         run: |
-          sudo apt-get install libpq-dev -y
-          #SKIP_DOCKER=true ./scripts/init_db.sh
           sqlx database setup
 
       - name: Run cargo-tarpaulin
