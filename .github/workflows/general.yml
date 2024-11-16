@@ -29,7 +29,6 @@ jobs:
         ports:
           - 5432:5432
     env:
-      SQLX_VERSION: 0.5.5
       SQLX_FEATURES: sqlite
     steps:
       - name: Checkout repository
@@ -56,7 +55,6 @@ jobs:
           crate: sqlx-cli
           args: >
             --force
-            --version=${{ env.SQLX_VERSION }}
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
@@ -77,15 +75,13 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-        uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: actions/checkout@v4
+      # Ensure rustfmt is installed and setup problem matcher
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: stable
-          override: true
           components: rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+      - name: Rustfmt Check
+        uses: actions-rust-lang/rustfmt@v1
 
   clippy:
     name: Clippy
@@ -100,7 +96,6 @@ jobs:
         ports:
           - 5432:5432
     env:
-      SQLX_VERSION: 0.5.5
       SQLX_FEATURES: sqlite
     steps:
       - name: Checkout repository
@@ -119,7 +114,6 @@ jobs:
           crate: sqlx-cli
           args: >
             --force
-            --version=${{ env.SQLX_VERSION }}
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
@@ -147,7 +141,6 @@ jobs:
         ports:
           - 5432:5432
     env:
-      SQLX_VERSION: 0.5.5
       SQLX_FEATURES: sqlite
     steps:
       - name: Checkout repository
@@ -165,7 +158,6 @@ jobs:
           crate: sqlx-cli
           args: >
             --force
-            --version=${{ env.SQLX_VERSION }}
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
             --locked
