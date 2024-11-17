@@ -3,7 +3,7 @@ name: botifactory-container
 run-name: botifactory-container
 
 env:
-  - DATABASE_URL: ${{ vars.VARIABLE_NAME }}
+  DATABASE_URL: ${{ vars.DATABASE_URL }}
 
 on:
   push:
