@@ -6,6 +6,9 @@ on: # rebuild any PRs and main branch changes
 
 name: bloat
 
+env:
+  DATABASE_URL: ${{ vars.DATABASE_URL }}
+
 jobs:
   cargo_bloat:
     runs-on: ubuntu-latest

@@ -15,6 +15,9 @@ on:
   # Run manually
   workflow_dispatch:
 
+env:
+  DATABASE_URL: ${{ vars.DATABASE_URL }}
+
 jobs:
   audit:
     runs-on: ubuntu-latest
