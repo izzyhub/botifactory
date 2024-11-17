@@ -56,7 +56,6 @@ jobs:
           args: >
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-            --locked
 
       - name: Migrate database
         with:
@@ -115,7 +114,6 @@ jobs:
             --force
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-            --locked
 
       - name: Migrate database
         run: |
@@ -159,7 +157,6 @@ jobs:
             --force
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-            --locked
 
       - name: Migrate database
         run: |
