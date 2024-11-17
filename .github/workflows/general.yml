@@ -103,7 +103,6 @@ jobs:
         with:
           crate: sqlx-cli
           args: >
-            --force
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
 
@@ -146,7 +145,6 @@ jobs:
         with:
           crate: sqlx-cli
           args: >
-            --force
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
 
