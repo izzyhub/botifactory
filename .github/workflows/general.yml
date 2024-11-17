@@ -57,15 +57,9 @@ jobs:
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
       - name: Migrate database
-        with:
-          path: |
-            ~/.cargo/bin/sqlx
         run: sqlx database setup
-
       - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+        run: cargo test
 
   fmt:
     name: Rustfmt
