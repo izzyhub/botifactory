@@ -54,17 +54,13 @@ jobs:
         with:
           crate: sqlx-cli
           args: >
-            --force
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-            --locked
-
       - name: Migrate database
         with:
           path: |
             ~/.cargo/bin/sqlx
-        run: |
-          sqlx database setup
+        run: sqlx database setup
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
@@ -116,7 +112,6 @@ jobs:
             --force
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-            --locked
 
       - name: Migrate database
         run: |
@@ -160,7 +155,6 @@ jobs:
             --force
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-            --locked
 
       - name: Migrate database
         run: |
