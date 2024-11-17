@@ -1,0 +1,56 @@
+{
+  "db_name": "SQLite",
+  "query": "\n          select id,\n          version,\n          hash,\n          path,\n          channel_id,\n          created_at,\n          updated_at\n          from releases\n          where id = $1  \n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "version",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "hash",
+        "ordinal": 2,
+        "type_info": "Blob"
+      },
+      {
+        "name": "path",
+        "ordinal": 3,
+        "type_info": "Text"
+      },
+      {
+        "name": "channel_id",
+        "ordinal": 4,
+        "type_info": "Integer"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 5,
+        "type_info": "Integer"
+      },
+      {
+        "name": "updated_at",
+        "ordinal": 6,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "37565fe8c6a63ee1d2b57496a5f151b1d23321e7fe157d58a286d1eab6300fd2"
+}

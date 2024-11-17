@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "\n          select id,\n          name,\n          created_at,\n          updated_at\n          from projects\n          where name = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "name",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "updated_at",
+        "ordinal": 3,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "55882873757bf333ac38a31bbe89385bc91625b1c3186f1dba5a51876435cfde"
+}

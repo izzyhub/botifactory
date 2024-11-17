@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "\n          INSERT INTO releases\n          (version, hash, path, channel_id) VALUES ($1, $2, $3, (SELECT id FROM release_channel WHERE name = $4))\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 4
+    },
+    "nullable": []
+  },
+  "hash": "1ad4d501c4dacb7e36e3f870a382a7cb4ffb71a668048f8ef9d4c56fb09986d8"
+}

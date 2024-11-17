@@ -1,0 +1,44 @@
+{
+  "db_name": "SQLite",
+  "query": "\n          select id,\n          name,\n          project_id,\n          created_at,\n          updated_at\n          from release_channel\n          where name = $1\n          and project_id = \n          (select id from projects where name = $2)\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "name",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "project_id",
+        "ordinal": 2,
+        "type_info": "Integer"
+      },
+      {
+        "name": "created_at",
+        "ordinal": 3,
+        "type_info": "Integer"
+      },
+      {
+        "name": "updated_at",
+        "ordinal": 4,
+        "type_info": "Integer"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "7f8ca97d8956a803f8213eb4c3dfcea7077e69d5f52cab04846b3b3749692cec"
+}
