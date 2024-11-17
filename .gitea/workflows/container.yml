@@ -2,6 +2,9 @@ name: botifactory-container
 
 run-name: botifactory-container
 
+env:
+  - DATABASE_URL: ${{ vars.VARIABLE_NAME }}
+
 on:
   push:
     branches:
