@@ -1,4 +1,6 @@
 FROM lukemathwalker/cargo-chef:latest as chef
+ARG DATABASE_URL
+ENV DATABASE_URL $DATABASE_URL
 WORKDIR /app
 RUN apt update && apt install lld clang -y
 
