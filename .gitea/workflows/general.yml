@@ -15,6 +15,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   DATABASE_URL: ${{ vars.DATABASE_URL }}
+  SQLX_OFFLINE: true
 
 jobs:
   test:
@@ -63,6 +64,7 @@ jobs:
           path: |
             ~/.cargo/bin/sqlx
         run: |
+          sqlx prepare
           sqlx database setup
 
       - name: Run cargo test

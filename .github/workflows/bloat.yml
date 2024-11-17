@@ -8,6 +8,7 @@ name: bloat
 
 env:
   DATABASE_URL: ${{ vars.DATABASE_URL }}
+  SQLX_OFFLINE: true
 
 jobs:
   cargo_bloat:

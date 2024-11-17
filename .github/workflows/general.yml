@@ -15,6 +15,7 @@ on:
 env:
   DATABASE_URL: ${{ vars.DATABASE_URL }}
   CARGO_TERM_COLOR: always
+  SQLX_OFFLINE: true
 
 jobs:
   test:
@@ -58,7 +59,9 @@ jobs:
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
       - name: Migrate database
-        run: sqlx database setup
+        run: >
+         | sqlx prepare
+         | sqlx database setup
       - name: Run cargo test
         run: cargo test
 

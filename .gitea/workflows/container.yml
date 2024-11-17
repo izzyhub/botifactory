@@ -4,6 +4,7 @@ run-name: botifactory-container
 
 env:
   DATABASE_URL: ${{ vars.DATABASE_URL }}
+  SQLX_OFFLINE: true
 
 on:
   push:

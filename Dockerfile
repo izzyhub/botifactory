@@ -1,6 +1,7 @@
 FROM lukemathwalker/cargo-chef:latest as chef
 ARG DATABASE_URL
 ENV DATABASE_URL $DATABASE_URL
+ENV SQLX_OFFLINE true
 WORKDIR /app
 RUN apt update && apt install lld clang -y
 
@@ -13,7 +14,7 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo install sqlx-cli --features sqlite
-RUN echo "DATABASE_URL: $DATABASE_URL"
+RUN sqlx prepare
 RUN sqlx database setup
 RUN cargo build --release --bin botifactory
 
