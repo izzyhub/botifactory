@@ -58,10 +58,6 @@ jobs:
           args: >
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-      - name: Migrate database
-        run: >
-         | sqlx prepare
-         | sqlx database setup
       - name: Run cargo test
         run: cargo test
 
@@ -110,10 +106,6 @@ jobs:
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
 
-      - name: Migrate database
-        run: |
-          sqlx database setup
-
       - name: Run clippy
         uses: actions-rs/clippy-check@v1
         with:
@@ -151,10 +143,6 @@ jobs:
           args: >
             --features=${{ env.SQLX_FEATURES }}
             --no-default-features
-
-      - name: Migrate database
-        run: |
-          sqlx database setup
 
       - name: Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1

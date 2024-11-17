@@ -14,8 +14,6 @@ COPY --from=planner /app/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo install sqlx-cli --features sqlite
-RUN sqlx prepare
-RUN sqlx database setup
 RUN cargo build --release --bin botifactory
 
 FROM debian:bullseye-slim AS runtime
