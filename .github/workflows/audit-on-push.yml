@@ -17,6 +17,7 @@ on:
 
 env:
   DATABASE_URL: ${{ vars.DATABASE_URL }}
+  BOTIFACTORY_APP__DATABASE__URL: ${{ vars.DATABASE_URL }}
   SQLX_OFFLINE: true
 
 jobs:
