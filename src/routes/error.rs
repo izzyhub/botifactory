@@ -1,9 +1,7 @@
 use axum::body::Body;
-use axum::http::{header::InvalidHeaderValue, HeaderMap, HeaderValue, Response, StatusCode};
+use axum::http::{header::InvalidHeaderValue, Response, StatusCode};
 use axum::response::IntoResponse;
 use axum::Json;
-use sqlx::error::DatabaseError;
-use std::collections::HashMap;
 use tracing;
 
 use serde::{Deserialize, Serialize};

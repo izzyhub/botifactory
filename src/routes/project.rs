@@ -10,14 +10,14 @@ use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
 use botifactory_common::{CreateProject, ProjectJson as Project};
-use sqlx::{FromRow, SqlitePool};
+use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct ProjectBody {
+pub struct ProjectBody {
     project: Project,
 }
 
@@ -86,7 +86,7 @@ pub async fn create_project(
     .iter()
     .collect();
     create_dir_all(project_path)?;
-    let project = sqlx::query!(
+    sqlx::query!(
         r#"
           insert into projects
           (name) VALUES ($1)

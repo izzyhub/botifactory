@@ -1,14 +1,7 @@
-use axum::{
-    routing::{get, post},
-    serve::Serve,
-    Json, Router,
-};
 use sqlx::SqlitePool;
 
 use std::sync::Arc;
 use tokio::net::TcpListener;
-use tower::ServiceBuilder;
-use tower_http::trace::TraceLayer;
 
 use crate::configuration::Settings;
 use crate::routes::*;

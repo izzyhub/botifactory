@@ -1,8 +1,8 @@
 use axum::{
-    body::{Body, Bytes},
+    body::Body,
     extract::{DefaultBodyLimit, Path, State},
+    http::header,
     http::header::{HeaderMap, HeaderValue, ACCEPT},
-    http::{header, StatusCode},
     response::{IntoResponse, Response},
     routing::{get, post},
     Json, Router,
@@ -140,10 +140,9 @@ pub async fn show_latest_project_release(
         })
         .into_response()),
         Some(b"application/octet-stream") => {
-            let binary_path = PathBuf::from(release.path);
-            let file = tokio::fs::File::open(binary_path.clone())
+            let file = tokio::fs::File::open(release.path.clone())
                 .await
-                .map_err(|err| APIError::NotFound)?;
+                .map_err(|_| APIError::NotFound)?;
             let stream = ReaderStream::new(file);
             let body = Body::from_stream(stream);
             let mut headers = HeaderMap::new();
@@ -151,7 +150,7 @@ pub async fn show_latest_project_release(
                 header::CONTENT_TYPE,
                 HeaderValue::from_str("application/octet-stream")?,
             );
-            let filename = binary_path.file_name().ok_or(APIError::InternalError)?;
+            let filename = release.path.file_name().ok_or(APIError::InternalError)?;
             let filename = filename.to_str().ok_or(APIError::InternalError)?;
 
             headers.insert(
@@ -256,7 +255,7 @@ pub async fn create_project_release(
 
     let release_path = release_path.to_str().ok_or(APIError::InternalError)?;
 
-    let project = sqlx::query!(
+    sqlx::query!(
         r#"
           INSERT INTO releases
           (version, hash, path, channel_id) VALUES ($1, $2, $3, (SELECT id FROM release_channel WHERE name = $4))

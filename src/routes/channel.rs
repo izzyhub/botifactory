@@ -16,7 +16,7 @@ use std::sync::Arc;
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct ChannelBody {
+pub struct ChannelBody {
     channel: Channel,
 }
 
@@ -96,7 +96,7 @@ pub async fn create_project_channel(
     .collect();
     create_dir_all(channel_path)?;
 
-    let project = sqlx::query!(
+    sqlx::query!(
         r#"
           insert into release_channel
           (name, project_id) VALUES ($1, (SELECT id from projects where name = $2))

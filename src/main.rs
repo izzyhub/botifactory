@@ -1,15 +1,6 @@
-use axum::{
-    extract::Path,
-    http::StatusCode,
-    routing::{get, post},
-    Json, Router,
-};
 use botifactory::configuration::get_configuration;
 use botifactory::run;
 use botifactory::telemetry::{get_log_subscriber, init_subscriber};
-use tokio::net::TcpListener;
-
-use serde::{Deserialize, Serialize};
 
 use anyhow::Result;
 
