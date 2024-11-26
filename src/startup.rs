@@ -14,7 +14,6 @@ use crate::configuration::Settings;
 use crate::routes::*;
 
 pub async fn run(db_pool: SqlitePool, settings: Settings) {
-    tracing_subscriber::fmt::init();
     println!("Hello, world!");
     let address = format!(
         "{}:{}",

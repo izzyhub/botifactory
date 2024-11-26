@@ -9,18 +9,11 @@ use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
+use botifactory_common::{CreateProject, ProjectJson as Project};
 use sqlx::{FromRow, SqlitePool};
 use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
-
-#[derive(Serialize, Deserialize, FromRow)]
-pub struct Project {
-    pub id: i64,
-    pub name: String,
-    pub created_at: i64,
-    pub updated_at: i64,
-}
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -28,15 +21,10 @@ struct ProjectBody {
     project: Project,
 }
 
-#[derive(Serialize, Deserialize)]
-struct CreateProject {
-    name: String,
-}
-
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
         .route("/project/:name/", get(show_project))
-        .route("/project/:id/", get(show_project_by_id))
+        //.route("/project/:id/", get(show_project_by_id))
         .route("/project/new", post(create_project))
 }
 pub async fn show_project(
@@ -62,6 +50,7 @@ pub async fn show_project(
     Ok(Json(ProjectBody { project }))
 }
 
+/*
 pub async fn show_project_by_id(
     Path(project_id): Path<i64>,
     State((db, _settings)): State<(SqlitePool, Arc<Settings>)>,
@@ -84,6 +73,7 @@ pub async fn show_project_by_id(
 
     Ok(Json(ProjectBody { project }))
 }
+*/
 
 pub async fn create_project(
     State((db, settings)): State<(SqlitePool, Arc<Settings>)>,

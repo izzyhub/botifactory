@@ -50,7 +50,7 @@ where
 
 #[derive(Debug, serde::Deserialize, PartialEq, Eq)]
 pub struct DatabaseSettings {
-    pub database_url: String,
+    pub url: String,
     #[serde(deserialize_with = "deserialize_log_level")]
     pub log_level: LevelFilter,
 }
@@ -58,7 +58,7 @@ pub struct DatabaseSettings {
 impl Default for DatabaseSettings {
     fn default() -> Self {
         DatabaseSettings {
-            database_url: "sqlite://botifactory.db".to_string(),
+            url: "file://botifactory.db".to_string(),
             log_level: LevelFilter::INFO,
         }
     }
@@ -66,7 +66,8 @@ impl Default for DatabaseSettings {
 
 impl DatabaseSettings {
     pub fn without_db(&self) -> SqliteConnectOptions {
-        SqliteConnectOptions::from_str(self.database_url.as_str())
+        println!("w/o db database_url: {}", self.url.as_str());
+        SqliteConnectOptions::from_str(self.url.as_str())
             .expect("Failed to parse databse url")
             .journal_mode(SqliteJournalMode::Wal)
             .create_if_missing(true)
@@ -75,8 +76,8 @@ impl DatabaseSettings {
     }
 
     pub fn with_db(&self) -> SqliteConnectOptions {
-        let options = self.without_db().filename(&self.database_url);
-        options
+        println!("w/ db database_url: {}", self.url.as_str());
+        self.without_db().filename(&self.url)
     }
 }
 
@@ -108,8 +109,9 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         )
         .add_source(
             config::Environment::with_prefix("BOTIFACTORY_APP")
-                .try_parsing(true)
-                .separator("_")
+                //.try_parsing(true)
+                .convert_case(config::Case::Snake)
+                .separator("__")
                 .list_separator(" "),
         )
         .build()?

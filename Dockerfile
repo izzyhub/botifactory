@@ -15,6 +15,7 @@ RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo install sqlx-cli --features sqlite
 RUN cargo build --release --bin botifactory
+RUN sqlx database setup
 
 FROM debian:bullseye-slim AS runtime
 WORKDIR /app

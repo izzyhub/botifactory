@@ -6,16 +6,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+#botifactory-common = { path = "../botifactory-common" }
+botifactory-common = { git = "https://github.com/izzyhub/botifactory-common" }
+
 axum = "0.7.5"
-config = "0.14.0"
+config = "0.14.1"
 secrecy = "0.8.0"
-serde = "1.0.210"
+serde = "1.0.215"
 serde-aux = "4.5.0"
-sqlx = { version = "0.8.2", features = [
-  "runtime-tokio-native-tls",
-  "sqlite",
-  "time",
-] }
+sqlx = { version = "0.8.2", features = ["sqlite", "time", "runtime-tokio"] }
 rusqlite = "=0.32.1"
 tokio = { version = "1.40.0", features = ["full"] }
 tracing = "0.1.40"
@@ -34,7 +33,6 @@ tokio-util = { version = "0.7.12", features = ["io"] }
 sha2 = "0.10.8"
 axum_typed_multipart = "0.13.2"
 tempfile = "3.14.0"
-
 [dev-dependencies]
 claim = "0.5"
 quickcheck = "1.0.3"
