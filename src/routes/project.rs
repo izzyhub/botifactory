@@ -12,7 +12,6 @@ use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
-use tracing::{error, debug};
 
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
