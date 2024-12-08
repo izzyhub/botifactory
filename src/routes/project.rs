@@ -7,7 +7,7 @@ use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
-use botifactory_common::{CreateProject, ProjectJson as Project, ProjectBody};
+use botifactory_common::{CreateProject, ProjectBody, ProjectJson as Project};
 use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
@@ -24,7 +24,6 @@ pub async fn show_project(
     Path(project_name): Path<String>,
     State((db, _settings)): State<(SqlitePool, Arc<Settings>)>,
 ) -> Result<Json<ProjectBody>> {
-
     let project = sqlx::query_as!(
         Project,
         r#"
@@ -80,7 +79,6 @@ pub async fn create_project(
     .fetch_optional(&db)
     .await?
     .ok_or(APIError::NotFound)?;
-
 
     Ok(Json(ProjectBody { project }))
 }

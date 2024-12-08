@@ -13,6 +13,7 @@ use tokio_util::io::ReaderStream;
 use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum_typed_multipart::{FieldData, TryFromMultipart, TypedMultipart};
+use botifactory_common::{ReleaseBody, ReleaseResponse};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use sqlx::{FromRow, SqlitePool};
@@ -20,7 +21,6 @@ use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tempfile::NamedTempFile;
-use botifactory_common::{ReleaseResponse, ReleaseBody};
 
 #[derive(Serialize, Deserialize, FromRow, Clone)]
 pub struct ReleaseRow {
@@ -44,7 +44,6 @@ impl From<ReleaseRow> for ReleaseResponse {
         }
     }
 }
-
 
 /*
 #[derive(Serialize, Deserialize)]
@@ -126,11 +125,10 @@ pub async fn show_latest_project_release(
     .ok_or(APIError::NotFound)?;
 
     match headers.get(ACCEPT).map(|x| x.as_bytes()) {
-        Some(b"*/*") => {
-            Ok(Json(ReleaseBody {
-                release: release.into(),
-            }).into_response())
-        }
+        Some(b"*/*") => Ok(Json(ReleaseBody {
+            release: release.into(),
+        })
+        .into_response()),
         Some(b"application/json") => Ok(Json(ReleaseBody {
             release: release.into(),
         })
@@ -276,7 +274,5 @@ pub async fn create_project_release(
         updated_at: response.updated_at,
     };
 
-    Ok(Json(ReleaseBody {
-        release,
-    }))
+    Ok(Json(ReleaseBody { release }))
 }

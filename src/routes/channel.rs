@@ -7,7 +7,7 @@ use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
-use botifactory_common::{ChannelJson as Channel, ChannelBody, CreateChannel};
+use botifactory_common::{ChannelBody, ChannelJson as Channel, CreateChannel};
 use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
@@ -15,15 +15,9 @@ use std::sync::Arc;
 
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
-        .route(
-            "/:project_name/:channel_name",
-            get(show_project_channel),
-        )
+        .route("/:project_name/:channel_name", get(show_project_channel))
         .route("/channel/:channel_id", get(show_channel_by_id))
-        .route(
-            "/:project_name/channel/new",
-            post(create_project_channel),
-        )
+        .route("/:project_name/channel/new", post(create_project_channel))
 }
 
 pub async fn show_project_channel(
