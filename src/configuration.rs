@@ -66,7 +66,6 @@ impl Default for DatabaseSettings {
 
 impl DatabaseSettings {
     pub fn without_db(&self) -> SqliteConnectOptions {
-        println!("w/o db database_url: {}", self.url.as_str());
         SqliteConnectOptions::from_str(self.url.as_str())
             .expect("Failed to parse databse url")
             .journal_mode(SqliteJournalMode::Wal)
@@ -76,7 +75,6 @@ impl DatabaseSettings {
     }
 
     pub fn with_db(&self) -> SqliteConnectOptions {
-        println!("w/ db database_url: {}", self.url.as_str());
         self.without_db().filename(&self.url)
     }
 }

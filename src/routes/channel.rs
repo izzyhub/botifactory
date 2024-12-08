@@ -7,28 +7,21 @@ use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
-use botifactory_common::{ChannelJson as Channel, CreateChannel};
-use serde::{Deserialize, Serialize};
+use botifactory_common::{ChannelJson as Channel, ChannelBody, CreateChannel};
 use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-#[derive(Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ChannelBody {
-    channel: Channel,
-}
-
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
         .route(
-            "/project/:project_name/:channel_name",
+            "/:project_name/:channel_name",
             get(show_project_channel),
         )
         .route("/channel/:channel_id", get(show_channel_by_id))
         .route(
-            "/project/:project_name/channel/new",
+            "/:project_name/channel/new",
             post(create_project_channel),
         )
 }
@@ -86,7 +79,7 @@ pub async fn create_project_channel(
     Path(project_name): Path<String>,
     State((db, settings)): State<(SqlitePool, Arc<Settings>)>,
     Json(payload): Json<CreateChannel>,
-) -> Result<()> {
+) -> Result<Json<ChannelBody>> {
     let channel_path: PathBuf = [
         &settings.application.release_path,
         &PathBuf::from(&project_name),
@@ -107,5 +100,25 @@ pub async fn create_project_channel(
     .execute(&db)
     .await?;
 
-    Ok(())
+    let channel = sqlx::query_as!(
+        Channel,
+        r#"
+          select id,
+          name,
+          project_id,
+          created_at,
+          updated_at
+          from release_channel
+          where name = $1
+          and project_id = 
+          (select id from projects where name = $2)
+        "#,
+        payload.channel_name,
+        project_name
+    )
+    .fetch_optional(&db)
+    .await?
+    .ok_or(APIError::NotFound)?;
+
+    Ok(Json(ChannelBody { channel }))
 }

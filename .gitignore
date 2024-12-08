@@ -1,3 +1,7 @@
 /target
 .env
 .envrc
+*.db
+*.db-shm
+*.db-wal
+releases

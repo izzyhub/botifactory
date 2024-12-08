@@ -16,7 +16,7 @@ async fn main() -> Result<()> {
         std::io::stdout,
     );
     init_subscriber(subscriber);
-    println!("created log sbuscriber");
+    println!("created log subscriber");
 
     println!("creating sqlite connection");
     let db_pool = sqlx::SqlitePool::connect_with(configuration.database.with_db()).await?;
@@ -25,7 +25,6 @@ async fn main() -> Result<()> {
     println!("Ran migrations");
 
     //tracing_subscriber::fmt::init();
-    println!("Hello, world!");
 
     run(db_pool, configuration).await;
     Ok(())

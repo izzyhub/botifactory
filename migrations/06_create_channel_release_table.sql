@@ -6,7 +6,9 @@ CREATE TABLE releases (
     channel_id INTEGER NOT NULL,
     created_at INTEGER  DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at INTEGER  DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (channel_id) REFERENCES release_channel (id)
+    FOREIGN KEY (channel_id) REFERENCES release_channel (id),
+    UNIQUE (hash, version, channel_id)
+
 );
 
 CREATE TRIGGER releases_updated_at

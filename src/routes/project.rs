@@ -3,34 +3,29 @@ use axum::{
     Json, Router,
 };
 
-use serde::{Deserialize, Serialize};
-
 use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
-use botifactory_common::{CreateProject, ProjectJson as Project};
+use botifactory_common::{CreateProject, ProjectJson as Project, ProjectBody};
 use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
-
-#[derive(Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ProjectBody {
-    project: Project,
-}
+use tracing::{error, debug};
 
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
         .route("/project/:name/", get(show_project))
-        //.route("/project/:id/", get(show_project_by_id))
+        .route("/project/:name", get(show_project))
         .route("/project/new", post(create_project))
+        .route("/project/new/", post(create_project))
 }
 pub async fn show_project(
     Path(project_name): Path<String>,
     State((db, _settings)): State<(SqlitePool, Arc<Settings>)>,
 ) -> Result<Json<ProjectBody>> {
+
     let project = sqlx::query_as!(
         Project,
         r#"
@@ -50,35 +45,10 @@ pub async fn show_project(
     Ok(Json(ProjectBody { project }))
 }
 
-/*
-pub async fn show_project_by_id(
-    Path(project_id): Path<i64>,
-    State((db, _settings)): State<(SqlitePool, Arc<Settings>)>,
-) -> Result<Json<ProjectBody>> {
-    let project = sqlx::query_as!(
-        Project,
-        r#"
-          select id,
-          name,
-          created_at,
-          updated_at
-          from projects
-          where id = $1
-        "#,
-        project_id
-    )
-    .fetch_optional(&db)
-    .await?
-    .ok_or(APIError::NotFound)?;
-
-    Ok(Json(ProjectBody { project }))
-}
-*/
-
 pub async fn create_project(
     State((db, settings)): State<(SqlitePool, Arc<Settings>)>,
     Json(payload): Json<CreateProject>,
-) -> Result<()> {
+) -> Result<Json<ProjectBody>> {
     let project_path: PathBuf = [
         &settings.application.release_path,
         &PathBuf::from(&payload.name),
@@ -96,5 +66,22 @@ pub async fn create_project(
     .execute(&db)
     .await?;
 
-    Ok(())
+    let project = sqlx::query_as!(
+        Project,
+        r#"
+          select id,
+          name,
+          created_at,
+          updated_at
+          from projects
+          where name = $1
+        "#,
+        payload.name
+    )
+    .fetch_optional(&db)
+    .await?
+    .ok_or(APIError::NotFound)?;
+
+
+    Ok(Json(ProjectBody { project }))
 }

@@ -20,6 +20,7 @@ use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tempfile::NamedTempFile;
+use botifactory_common::{ReleaseResponse, ReleaseBody};
 
 #[derive(Serialize, Deserialize, FromRow, Clone)]
 pub struct ReleaseRow {
@@ -28,15 +29,6 @@ pub struct ReleaseRow {
     pub hash: Vec<u8>,
     pub path: PathBuf,
     pub channel_id: i64,
-    pub created_at: i64,
-    pub updated_at: i64,
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct ReleaseResponse {
-    pub id: i64,
-    pub version: String,
-    pub hash: Vec<u8>,
     pub created_at: i64,
     pub updated_at: i64,
 }
@@ -53,11 +45,6 @@ impl From<ReleaseRow> for ReleaseResponse {
     }
 }
 
-#[derive(Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ReleaseBody {
-    pub release: ReleaseResponse,
-}
 
 /*
 #[derive(Serialize, Deserialize)]
@@ -89,16 +76,20 @@ const fn body_limit() -> usize {
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
         .route(
-            "/project/:project_name/:channel_name/latest",
+            "/:project_name/:channel_name/current",
             get(show_latest_project_release),
         )
         .route(
-            "/project/:project_name/:channel_name/previous",
+            "/:project_name/:channel_name/latest",
+            get(show_latest_project_release),
+        )
+        .route(
+            "/:project_name/:channel_name/previous",
             get(show_previous_project_release),
         )
         .route("/releases/:id", get(show_project_release))
         .route(
-            "/project/:project_name/:channel_name/new",
+            "/:project_name/:channel_name/new",
             post(create_project_release),
         )
         .layer(DefaultBodyLimit::max(body_limit()))
@@ -122,8 +113,7 @@ pub async fn show_latest_project_release(
           from releases
             left join release_channel ON releases.channel_id = release_channel.id
             left join projects ON release_channel.project_id = projects.id
-          where release_channel.name = projects.name
-            and projects.name = $1
+          where projects.name = $1
             and release_channel.name = $2
           order by created_at desc
           limit 2
@@ -134,7 +124,13 @@ pub async fn show_latest_project_release(
     .fetch_optional(&db)
     .await?
     .ok_or(APIError::NotFound)?;
+
     match headers.get(ACCEPT).map(|x| x.as_bytes()) {
+        Some(b"*/*") => {
+            Ok(Json(ReleaseBody {
+                release: release.into(),
+            }).into_response())
+        }
         Some(b"application/json") => Ok(Json(ReleaseBody {
             release: release.into(),
         })
@@ -181,8 +177,7 @@ pub async fn show_previous_project_release(
           from releases
           left join release_channel ON releases.channel_id = release_channel.id
           left join projects ON release_channel.project_id = projects.id
-          where release_channel.name = projects.name
-          and projects.name = $1
+          where projects.name = $1
           and release_channel.name = $2
           order by created_at desc
           limit 2
@@ -231,7 +226,7 @@ pub async fn create_project_release(
     Path((project_name, channel_name)): Path<(String, String)>,
     State((db, settings)): State<(SqlitePool, Arc<Settings>)>,
     TypedMultipart(CreateRelease { version, binary }): TypedMultipart<CreateRelease>,
-) -> Result<()> {
+) -> Result<Json<ReleaseBody>> {
     let channel_path: PathBuf = [
         &settings.application.release_path,
         &PathBuf::from(&project_name),
@@ -255,18 +250,33 @@ pub async fn create_project_release(
 
     let release_path = release_path.to_str().ok_or(APIError::InternalError)?;
 
-    sqlx::query!(
+    let response = sqlx::query!(
         r#"
           INSERT INTO releases
-          (version, hash, path, channel_id) VALUES ($1, $2, $3, (SELECT id FROM release_channel WHERE name = $4))
+          (version, hash, path, channel_id) VALUES ($1, $2, $3, 
+            (SELECT id FROM release_channel WHERE name = $4 and project_id =
+              (SELECT id from projects where name=$5))
+          )
+          RETURNING id, version, hash, created_at, updated_at
         "#,
         version,
         hash,
         release_path,
         channel_name,
+        project_name
     )
-    .execute(&db)
+    .fetch_one(&db)
     .await?;
 
-    Ok(())
+    let release = ReleaseResponse {
+        id: response.id,
+        version: response.version,
+        hash: response.hash,
+        created_at: response.created_at,
+        updated_at: response.updated_at,
+    };
+
+    Ok(Json(ReleaseBody {
+        release,
+    }))
 }
