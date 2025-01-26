@@ -6,32 +6,34 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+#botifactory-types = { path = "../botifactory-types" }
+botifactory-types = { git = "https://github.com/izzyhub/botifactory-types" }
 #botifactory-common = { path = "../botifactory-common" }
 botifactory-common = { git = "https://github.com/izzyhub/botifactory-common" }
 
-axum = "0.7.5"
-config = "0.14.1"
-secrecy = "0.8.0"
+axum = "0.8.1"
+config = "0.15.6"
+secrecy = "0.10.3"
 serde = "1.0.215"
 serde-aux = "4.5.0"
 sqlx = { version = "0.8.2", features = ["sqlite", "time", "runtime-tokio"] }
-rusqlite = "=0.32.1"
+rusqlite = "0.32.1"
 tokio = { version = "1.40.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-bunyan-formatter = "0.3.9"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tracing-log = "0.2.0"
 tower = "0.5.1"
-tower-http = { version = "0.5.2", features = ["trace"] }
+tower-http = { version = "0.6.2", features = ["trace"] }
 anyhow = "1.0.89"
 url = "2.5.2"
 log = "0.4.22"
-thiserror = "1.0.64"
-axum-macros = "0.4.2"
+thiserror = "2.0.11"
+axum-macros = "0.5.0"
 bytes = "1.7.2"
 tokio-util = { version = "0.7.12", features = ["io"] }
 sha2 = "0.10.8"
-axum_typed_multipart = "0.13.2"
+axum_typed_multipart = "0.15.1"
 tempfile = "3.14.0"
 [dev-dependencies]
 claim = "0.5"

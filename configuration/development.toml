@@ -1,7 +1,7 @@
 [application]
 port = 8000
 log_level = "trace"
-host = "127.0.0.1"
+host = "0.0.0.0"
 release_path = "./releases"
 [database]
 url = "file://develop.db"
