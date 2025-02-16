@@ -7,7 +7,7 @@ use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
-use botifactory_common::{CreateProject, ProjectBody, ProjectJson as Project};
+use botifactory_types::{CreateProject, ProjectBody, ProjectJson as Project};
 use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
@@ -15,8 +15,8 @@ use std::sync::Arc;
 
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
-        .route("/project/:name/", get(show_project))
-        .route("/project/:name", get(show_project))
+        .route("/project/{name}/", get(show_project))
+        .route("/project/{name}", get(show_project))
         .route("/project/new", post(create_project))
         .route("/project/new/", post(create_project))
 }

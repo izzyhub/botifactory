@@ -15,9 +15,9 @@ use std::sync::Arc;
 
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
-        .route("/:project_name/:channel_name", get(show_project_channel))
-        .route("/channel/:channel_id", get(show_channel_by_id))
-        .route("/:project_name/channel/new", post(create_project_channel))
+        .route("/{project_name}/{channel_name}", get(show_project_channel))
+        .route("/channel/{channel_id}", get(show_channel_by_id))
+        .route("/{project_name}/channel/new", post(create_project_channel))
 }
 
 pub async fn show_project_channel(

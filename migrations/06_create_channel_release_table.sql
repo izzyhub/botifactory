@@ -1,7 +1,7 @@
 CREATE TABLE releases (
     id INTEGER PRIMARY KEY NOT NULL,
     version TEXT NOT NULL,
-    hash BLOB NOT NULL,
+    hash TEXT NOT NULL,
     path TEXT NOT NULL,
     channel_id INTEGER NOT NULL,
     created_at INTEGER  DEFAULT CURRENT_TIMESTAMP NOT NULL,

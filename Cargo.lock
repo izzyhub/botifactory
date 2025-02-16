@@ -317,7 +317,7 @@ dependencies = [
  "axum-macros",
  "axum_typed_multipart",
  "botifactory-common",
- "botifactory-types",
+ "botifactory-types 0.1.0",
  "bytes",
  "claim",
  "config",
@@ -346,8 +346,8 @@ dependencies = [
 [[package]]
 name = "botifactory-common"
 version = "0.1.0"
-source = "git+https://github.com/izzyhub/botifactory-common#9a5e36ee5c618c3800ac076248ff81fe2955a10b"
 dependencies = [
+ "botifactory-types 0.1.0 (git+https://github.com/izzyhub/botifactory-types)",
  "bytes",
  "display_json",
  "reqwest",
@@ -355,6 +355,15 @@ dependencies = [
  "serde_json",
  "thiserror",
  "url",
+]
+
+[[package]]
+name = "botifactory-types"
+version = "0.1.0"
+dependencies = [
+ "display_json",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

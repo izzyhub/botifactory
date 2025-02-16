@@ -13,7 +13,7 @@ use tokio_util::io::ReaderStream;
 use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum_typed_multipart::{FieldData, TryFromMultipart, TypedMultipart};
-use botifactory_common::{ReleaseBody, ReleaseResponse};
+use botifactory_types::{ReleaseBody, ReleaseResponse};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use sqlx::{FromRow, SqlitePool};
@@ -26,7 +26,7 @@ use tempfile::NamedTempFile;
 pub struct ReleaseRow {
     pub id: i64,
     pub version: String,
-    pub hash: Vec<u8>,
+    pub hash: String,
     pub path: PathBuf,
     pub channel_id: i64,
     pub created_at: i64,
@@ -75,20 +75,20 @@ const fn body_limit() -> usize {
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
     Router::new()
         .route(
-            "/:project_name/:channel_name/current",
+            "/{project_name}/{channel_name}/current",
             get(show_latest_project_release),
         )
         .route(
-            "/:project_name/:channel_name/latest",
+            "/{project_name}/{channel_name}/latest",
             get(show_latest_project_release),
         )
         .route(
-            "/:project_name/:channel_name/previous",
+            "/{project_name}/{channel_name}/previous",
             get(show_previous_project_release),
         )
-        .route("/releases/:id", get(show_project_release))
+        .route("/releases/{id}", get(show_project_release))
         .route(
-            "/:project_name/:channel_name/new",
+            "/{project_name}/{channel_name}/new",
             post(create_project_release),
         )
         .layer(DefaultBodyLimit::max(body_limit()))
