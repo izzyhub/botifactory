@@ -6,10 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-botifactory-types = { path = "../botifactory-types" }
-#botifactory-types = { git = "https://github.com/izzyhub/botifactory-types" }
-botifactory-common = { path = "../botifactory-common" }
-#botifactory-common = { git = "https://github.com/izzyhub/botifactory-common" }
+#botifactory-types = { path = "../botifactory-types" }
+botifactory-types = { git = "https://github.com/izzyhub/botifactory-types" }
+#botifactory-common = { path = "../botifactory-common" }
+botifactory-common = { git = "https://github.com/izzyhub/botifactory-common" }
 
 axum = "0.8.1"
 config = "0.15.6"
