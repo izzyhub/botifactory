@@ -9,6 +9,19 @@ cargo install tracing-bunyan-formatter sqlx-cli
 ```
 
 # Preparing the project
+## Setup your environment variables (direnv helps I find)
+These are largely the same variable but the first is for sqlx-cli
+and the second is for the actual app.
+```shell
+export DATABASE_URL="sqlite://$PWD/develop.db"
+export BOTIFACTORY_APP__DATABASE__URL="file://$PWD/develop.db"
+```
+You can also do this
+```shell
+export DATABASE_URL="sqlite://$PWD/develop.db"
+export BOTIFACTORY_APP__DATABASE__URL="$DATABASE_URL"
+```
+
 ## Set up the database
 ```shell
 sqlx database setup
