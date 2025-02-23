@@ -326,6 +326,7 @@ dependencies = [
  "quickcheck_macros",
  "rusqlite",
  "secrecy",
+ "semver",
  "serde",
  "serde-aux",
  "sha2",
@@ -346,7 +347,7 @@ dependencies = [
 [[package]]
 name = "botifactory-common"
 version = "0.1.0"
-source = "git+https://github.com/izzyhub/botifactory-common#b4229dc15bec6882c7d70068b6bb593e430c0c7b"
+source = "git+https://github.com/izzyhub/botifactory-common#0084ad91d5ef266f853a1ce8ebb0cea3e23d8841"
 dependencies = [
  "botifactory-types",
  "bytes",
@@ -361,8 +362,10 @@ dependencies = [
 [[package]]
 name = "botifactory-types"
 version = "0.1.0"
-source = "git+https://github.com/izzyhub/botifactory-types#e25a5fc1ade0ec138ce5ed7a26b0eff822d0287a"
+source = "git+https://github.com/izzyhub/botifactory-types#ab834be4a6e9c09de9bd6e6b8be7352d4ccaaf3e"
 dependencies = [
+ "heapless",
+ "semver",
  "serde",
  "serde-json-core",
 ]
@@ -2345,6 +2348,15 @@ checksum = "49db231d56a190491cb4aeda9527f1ad45345af50b0851622a7adb8c03b01c32"
 dependencies = [
  "core-foundation-sys",
  "libc",
+]
+
+[[package]]
+name = "semver"
+version = "1.0.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f79dfe2d285b0488816f30e700a7438c5a73d816b5b7d3ac72fbc48b0d185e03"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

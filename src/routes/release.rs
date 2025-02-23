@@ -14,6 +14,7 @@ use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum_typed_multipart::{FieldData, TryFromMultipart, TypedMultipart};
 use botifactory_types::{ReleaseBody, ReleaseResponse};
+use semver::Version;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use sqlx::{FromRow, SqlitePool};
@@ -37,7 +38,7 @@ impl From<ReleaseRow> for ReleaseResponse {
     fn from(row: ReleaseRow) -> Self {
         ReleaseResponse {
             id: row.id,
-            version: row.version,
+            version: Version::parse(&row.version).expect("Bad value made it to the database!!"),
             hash: row.hash,
             created_at: row.created_at,
             updated_at: row.updated_at,
@@ -268,7 +269,7 @@ pub async fn create_project_release(
 
     let release = ReleaseResponse {
         id: response.id,
-        version: response.version,
+        version: Version::parse(&response.version)?,
         hash: response.hash,
         created_at: response.created_at,
         updated_at: response.updated_at,

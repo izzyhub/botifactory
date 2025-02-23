@@ -37,6 +37,8 @@ pub enum APIError {
     HeaderError(#[from] InvalidHeaderValue),
     #[error("Bad header value")]
     PersistBinaryError(#[from] tempfile::PersistError),
+    #[error("Semver error")]
+    VersionParseError(#[from] semver::Error),
 }
 
 pub type Result<T, E = APIError> = std::result::Result<T, E>;
@@ -67,6 +69,10 @@ impl IntoResponse for APIError {
                 StatusCode::INTERNAL_SERVER_ERROR,
                 format!("Persisting temporary file error: {internal_error}"),
             ),
+            Self::VersionParseError(internal_error) => (
+                StatusCode::BAD_REQUEST,
+                format!("Bad version format: {internal_error}"),
+            )
         };
 
         tracing::error!(error);
