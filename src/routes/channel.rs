@@ -7,7 +7,7 @@ use crate::configuration::Settings;
 use crate::routes::error::{APIError, Result};
 use axum::extract::Path;
 use axum::extract::State;
-use botifactory_common::{ChannelBody, ChannelJson as Channel, CreateChannel};
+use botifactory_types::{ChannelBody, ChannelJson as Channel, CreateChannel};
 use sqlx::SqlitePool;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
