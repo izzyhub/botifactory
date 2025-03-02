@@ -154,8 +154,15 @@ pub async fn show_latest_project_release(
             );
             Ok((headers, body).into_response())
         }
-        None => Err(APIError::RequestError),
-        Some(_) => Err(APIError::UnsupportedMediaType),
+        None => {
+            tracing::error!("no response type");
+            Err(APIError::RequestError)
+        },
+        Some(_bad_type) => {
+            tracing::error!("unsupported header type");
+            //tracing::error!("unsupported header type: {bad_type}");
+            Err(APIError::UnsupportedMediaType)
+        },
     }
 }
 
