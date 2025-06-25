@@ -157,12 +157,12 @@ pub async fn show_latest_project_release(
         None => {
             tracing::error!("no response type");
             Err(APIError::RequestError)
-        },
+        }
         Some(_bad_type) => {
             tracing::error!("unsupported header type");
             //tracing::error!("unsupported header type: {bad_type}");
             Err(APIError::UnsupportedMediaType)
-        },
+        }
     }
 }
 
