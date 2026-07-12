@@ -58,24 +58,23 @@ pub struct DatabaseSettings {
 impl Default for DatabaseSettings {
     fn default() -> Self {
         DatabaseSettings {
-            url: "file://botifactory.db".to_string(),
+            url: "file:botifactory.db".to_string(),
             log_level: LevelFilter::INFO,
         }
     }
 }
 
 impl DatabaseSettings {
-    pub fn without_db(&self) -> SqliteConnectOptions {
+    pub fn connect_options(&self) -> SqliteConnectOptions {
+        // The URL is parsed once by from_str; overriding the filename with the
+        // raw URL string afterwards (as the old with_db() did) makes SQLite
+        // open a file literally named after the URL.
         SqliteConnectOptions::from_str(self.url.as_str())
-            .expect("Failed to parse databse url")
+            .expect("failed to parse database url")
             .journal_mode(SqliteJournalMode::Wal)
             .create_if_missing(true)
             .auto_vacuum(sqlx::sqlite::SqliteAutoVacuum::Full)
             .log_statements(convert_to_log_level_filter(self.log_level))
-    }
-
-    pub fn with_db(&self) -> SqliteConnectOptions {
-        self.without_db().filename(&self.url)
     }
 }
 

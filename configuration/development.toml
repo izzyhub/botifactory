@@ -4,5 +4,5 @@ log_level = "trace"
 host = "0.0.0.0"
 release_path = "./releases"
 [database]
-url = "file://develop.db"
+url = "sqlite://develop.db"
 log_level = "trace"

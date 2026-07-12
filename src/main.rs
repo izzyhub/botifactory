@@ -19,7 +19,7 @@ async fn main() -> Result<()> {
     println!("created log subscriber");
 
     println!("creating sqlite connection");
-    let db_pool = sqlx::SqlitePool::connect_with(configuration.database.with_db()).await?;
+    let db_pool = sqlx::SqlitePool::connect_with(configuration.database.connect_options()).await?;
     println!("connected to sqlite");
     sqlx::migrate!("./migrations").run(&db_pool).await?;
     println!("Ran migrations");
