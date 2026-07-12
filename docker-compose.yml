@@ -16,6 +16,10 @@ services:
     restart: unless-stopped
     volumes:
       - .env:/app/.env
+      # Firmware binaries and the SQLite database must survive container
+      # recreation; without these mounts a redeploy erases every release.
+      - botifactory-releases:/releases
+      - botifactory-data:/data
     networks:
       - t2_proxy
     labels:
@@ -31,3 +35,7 @@ networks:
   t2_proxy:
     name: t2_proxy
     external: true
+
+volumes:
+  botifactory-releases:
+  botifactory-data:

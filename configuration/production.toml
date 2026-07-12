@@ -4,5 +4,7 @@ log_level = "error"
 host = "0.0.0.0"
 release_path = "/releases"
 [database]
-url = "file://botifactory.db"
+# Absolute path inside the /data volume so the database survives container
+# recreation (see docker-compose.yml).
+url = "sqlite:///data/botifactory.db"
 log_level = "error"
