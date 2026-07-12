@@ -1,4 +1,6 @@
 /target
+# rust-analyzer and other tools create nested target directories (e.g. src/target)
+**/target/
 .env
 .envrc
 *.db
