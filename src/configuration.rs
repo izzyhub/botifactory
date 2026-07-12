@@ -24,6 +24,11 @@ pub struct ApplicationSettings {
     #[serde(deserialize_with = "deserialize_log_level")]
     pub log_level: LevelFilter,
     pub release_path: PathBuf,
+    /// Bearer token required on write endpoints (project/channel/release
+    /// creation). Optional in development; mandatory in production — see
+    /// `get_configuration`. Set via BOTIFACTORY_APP__APPLICATION__API_TOKEN.
+    #[serde(default)]
+    pub api_token: Option<String>,
 }
 
 impl Default for ApplicationSettings {
@@ -33,6 +38,7 @@ impl Default for ApplicationSettings {
             host: "localhost".into(),
             log_level: LevelFilter::TRACE,
             release_path: PathBuf::from("/releases"),
+            api_token: None,
         }
     }
 }
@@ -99,7 +105,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .try_into()
         .expect("Failed to parse BOTIFACTORY_APP_ENVIRONMENT");
 
-    Config::builder()
+    let settings: Settings = Config::builder()
         .add_source(config::File::from(configuration_directory.join("base")))
         .add_source(
             config::File::from(configuration_directory.join(environment.as_str())).required(true),
@@ -112,7 +118,19 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
                 .list_separator(" "),
         )
         .build()?
-        .try_deserialize()
+        .try_deserialize()?;
+
+    // An internet-facing production instance must never run with open write
+    // endpoints: anyone could upload firmware that devices will flash.
+    if matches!(environment, Environment::Production) && settings.application.api_token.is_none() {
+        return Err(config::ConfigError::Message(
+            "application.api_token must be set in production \
+             (env var BOTIFACTORY_APP__APPLICATION__API_TOKEN)"
+                .to_string(),
+        ));
+    }
+
+    Ok(settings)
 }
 
 pub enum Environment {

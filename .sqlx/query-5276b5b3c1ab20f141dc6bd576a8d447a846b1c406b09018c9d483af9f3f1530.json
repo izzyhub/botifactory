@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "\n          select release_channel.id from release_channel\n          join projects on release_channel.project_id = projects.id\n          where release_channel.name = $1 and projects.name = $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer",
+        "origin": {
+          "Table": {
+            "table": "release_channel",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "5276b5b3c1ab20f141dc6bd576a8d447a846b1c406b09018c9d483af9f3f1530"
+}

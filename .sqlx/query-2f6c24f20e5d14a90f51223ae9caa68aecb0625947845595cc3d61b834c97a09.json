@@ -1,0 +1,12 @@
+{
+  "db_name": "SQLite",
+  "query": "delete from releases where id = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "2f6c24f20e5d14a90f51223ae9caa68aecb0625947845595cc3d61b834c97a09"
+}

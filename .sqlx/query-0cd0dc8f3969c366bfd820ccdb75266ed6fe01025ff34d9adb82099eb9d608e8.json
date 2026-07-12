@@ -1,0 +1,26 @@
+{
+  "db_name": "SQLite",
+  "query": "select id from projects where name = $1",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer",
+        "origin": {
+          "Table": {
+            "table": "projects",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "0cd0dc8f3969c366bfd820ccdb75266ed6fe01025ff34d9adb82099eb9d608e8"
+}

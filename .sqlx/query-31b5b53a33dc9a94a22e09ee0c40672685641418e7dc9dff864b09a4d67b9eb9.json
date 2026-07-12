@@ -1,0 +1,21 @@
+{
+  "db_name": "SQLite",
+  "query": "select count(*) as \"count: i64\" from releases where channel_id = $1 and version = $2",
+  "describe": {
+    "columns": [
+      {
+        "name": "count: i64",
+        "ordinal": 0,
+        "type_info": "Integer",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "31b5b53a33dc9a94a22e09ee0c40672685641418e7dc9dff864b09a4d67b9eb9"
+}

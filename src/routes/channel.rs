@@ -3,14 +3,15 @@ use axum::{
     Json, Router,
 };
 
+use crate::auth::RequireApiToken;
 use crate::configuration::Settings;
-use crate::routes::error::{APIError, Result};
+use crate::routes::error::{conflict_on_unique, APIError, Result};
+use crate::validation::ResourceName;
 use axum::extract::Path;
 use axum::extract::State;
 use botifactory_types::{ChannelBody, ChannelJson as Channel, CreateChannel};
 use sqlx::SqlitePool;
 use std::fs::create_dir_all;
-use std::path::PathBuf;
 use std::sync::Arc;
 
 pub fn router() -> Router<(SqlitePool, Arc<Settings>)> {
@@ -70,29 +71,46 @@ pub async fn show_channel_by_id(
     Ok(Json(ChannelBody { channel }))
 }
 pub async fn create_project_channel(
+    _auth: RequireApiToken,
     Path(project_name): Path<String>,
     State((db, settings)): State<(SqlitePool, Arc<Settings>)>,
     Json(payload): Json<CreateChannel>,
 ) -> Result<Json<ChannelBody>> {
-    let channel_path: PathBuf = [
-        &settings.application.release_path,
-        &PathBuf::from(&project_name),
-        &PathBuf::from(&payload.channel_name),
-    ]
-    .iter()
-    .collect();
-    create_dir_all(channel_path)?;
+    // Both names end up as path components under release_path; ResourceName
+    // rejects separators/dots so they cannot escape that directory.
+    let project_name_validated = ResourceName::parse(&project_name)?;
+    let channel_name = ResourceName::parse(&payload.channel_name)?;
 
+    // Look the project up explicitly so a missing project is a 404 rather
+    // than a NOT NULL constraint failure (500).
+    let project_id = sqlx::query_scalar!(
+        r#"select id from projects where name = $1"#,
+        project_name
+    )
+    .fetch_optional(&db)
+    .await?
+    .ok_or(APIError::NotFound)?;
+
+    // Insert before touching the filesystem so a duplicate channel is a
+    // clean 409 with no orphaned directory.
     sqlx::query!(
         r#"
           insert into release_channel
-          (name, project_id) VALUES ($1, (SELECT id from projects where name = $2))
+          (name, project_id) VALUES ($1, $2)
         "#,
         payload.channel_name,
-        project_name
+        project_id
     )
     .execute(&db)
-    .await?;
+    .await
+    .map_err(conflict_on_unique)?;
+
+    let channel_path = settings
+        .application
+        .release_path
+        .join(project_name_validated.as_str())
+        .join(channel_name.as_str());
+    create_dir_all(channel_path)?;
 
     let channel = sqlx::query_as!(
         Channel,
