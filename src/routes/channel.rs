@@ -83,13 +83,11 @@ pub async fn create_project_channel(
 
     // Look the project up explicitly so a missing project is a 404 rather
     // than a NOT NULL constraint failure (500).
-    let project_id = sqlx::query_scalar!(
-        r#"select id from projects where name = $1"#,
-        project_name
-    )
-    .fetch_optional(&db)
-    .await?
-    .ok_or(APIError::NotFound)?;
+    let project_id =
+        sqlx::query_scalar!(r#"select id from projects where name = $1"#, project_name)
+            .fetch_optional(&db)
+            .await?
+            .ok_or(APIError::NotFound)?;
 
     // Insert before touching the filesystem so a duplicate channel is a
     // clean 409 with no orphaned directory.

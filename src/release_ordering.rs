@@ -19,7 +19,9 @@ fn sort_key(candidate: &ReleaseCandidate) -> (&Version, i64, i64) {
 /// The release with the highest version (not the most recently uploaded one:
 /// uploading an old version must not make devices "upgrade" backwards).
 pub fn latest_release(candidates: &[ReleaseCandidate]) -> Option<&ReleaseCandidate> {
-    candidates.iter().max_by_key(|candidate| sort_key(candidate))
+    candidates
+        .iter()
+        .max_by_key(|candidate| sort_key(candidate))
 }
 
 /// The newest release with a version strictly lower than the latest — the
