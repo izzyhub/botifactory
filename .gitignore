@@ -7,3 +7,7 @@
 *.db-shm
 *.db-wal
 releases
+examples
+# nix build output links
+result
+result-*

@@ -41,6 +41,24 @@ export BOTIFACTORY_APP__DATABASE__URL="file://$PWD/develop.db"
 sqlx database setup
 ```
 
+## Nix
+
+`flake.nix` provides the package, an OCI image, checks and a dev shell:
+```shell
+nix develop            # toolchain, sqlx-cli, sqlite; sets DATABASE_URL defaults
+nix build              # binary (runs the unit tests); configuration/ in share/
+nix build .#image      # OCI image tarball (what CI pushes)
+nix flake check        # build + tests, clippy -D warnings, fmt --check
+```
+CI (`.gitea/workflows/`) runs on the `nix-build` runner: `ci.yml` runs
+`nix flake check` and builds the image; `container.yml` pushes the image to the
+Gitea registry from main.
+
+The build is offline (`SQLX_OFFLINE`), so after changing a `query!` run
+`cargo sqlx prepare` and commit `.sqlx/`. botifactory-types/-common are git
+dependencies (Nix and CI cannot see sibling checkouts); bump them with
+`cargo update -p botifactory-types -p botifactory-common`.
+
 ## Common Commands
 
 ### Build and Run

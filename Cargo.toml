@@ -6,10 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-botifactory-types = { path = "../botifactory-types" }
-#botifactory-types = { git = "https://github.com/izzyhub/botifactory-types" }
-botifactory-common = { path = "../botifactory-common" }
-#botifactory-common = { git = "https://github.com/izzyhub/botifactory-common" }
+# Git, not path, dependencies: the Nix build sandbox and CI only see this
+# repository, so sibling checkouts are unreachable. For local co-development,
+# override with a `[patch]` in .cargo/config.toml (untracked) instead.
+botifactory-types = { git = "https://gitea.izzys.place/izzy/botifactory-types.git" }
+botifactory-common = { git = "https://gitea.izzys.place/izzy/botifactory-common.git" }
 
 axum = "0.8.1"
 config = "0.15.6"
@@ -48,3 +49,10 @@ path = "src/lib.rs"
 [[bin]]
 path = "src/main.rs"
 name = "botifactory"
+
+# botifactory-common depends on the (stale) GitHub mirror of botifactory-types.
+# Point it at the same Gitea copy used above so there is exactly one
+# botifactory-types in the graph — two same-named crates are distinct types to
+# rustc, and nixpkgs' cargo vendoring cannot hold both.
+[patch."https://github.com/izzyhub/botifactory-types"]
+botifactory-types = { git = "https://gitea.izzys.place/izzy/botifactory-types.git" }

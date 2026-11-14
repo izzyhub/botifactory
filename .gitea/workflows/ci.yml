@@ -1,0 +1,29 @@
+name: ci
+
+run-name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check:
+    runs-on: nix-build
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      # Everything is a flake check (see `checks` in flake.nix):
+      #  - botifactory: the release build with SQLX_OFFLINE, so a stale .sqlx/
+      #    fails here, plus the unit tests as its check phase
+      #  - clippy: `cargo clippy --all-targets -- -D warnings`
+      #  - fmt: `cargo fmt --check`
+      - name: Flake check
+        run: nix flake check -L
+
+      # The image is only pushed from main (container.yml); building it here
+      # catches a broken image on the PR rather than after merge.
+      - name: Build image
+        run: nix build -L .#image --no-link
